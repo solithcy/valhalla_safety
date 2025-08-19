@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'safety'
     tags:
       - '*'
     paths-ignore:
@@ -12,7 +13,7 @@ on:
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'valhalla' }}
+    if: ${{ github.repository_owner == 'solithcy' }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -38,7 +39,7 @@ jobs:
           docker buildx create --name mybuilder
           docker buildx use mybuilder
           docker buildx inspect --bootstrap
-          docker buildx build --push --platform linux/amd64,linux/arm64 --tag ghcr.io/valhalla/valhalla:${{ steps.extract_tag.outputs.tag }} .
+          docker buildx build --push --platform linux/amd64,linux/arm64 --tag ghcr.io/solithcy/valhalla_safety:${{ steps.extract_tag.outputs.tag }} .
       - name: Build latest image
         if: github.ref == 'refs/heads/master'
         run: |
@@ -48,4 +49,4 @@ jobs:
           docker buildx create --name mybuilder
           docker buildx use mybuilder
           docker buildx inspect --bootstrap
-          docker buildx build --push --platform linux/amd64,linux/arm64 --tag ghcr.io/valhalla/valhalla:latest .
+          docker buildx build --push --platform linux/amd64,linux/arm64 --tag ghcr.io/solithcy/valhalla_safety:latest .
