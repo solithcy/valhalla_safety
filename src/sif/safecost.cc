@@ -26,7 +26,7 @@ namespace sif {
 
 namespace {
 constexpr float kMinCrimeFactor = 0.0f;
-constexpr float kMaxCrimeFactor = 5.0f;
+constexpr float kMaxCrimeFactor = 50.0f;
 constexpr float kCrimeFactor = 0.5f; // avoid higher crime areas
 constexpr ranged_default_t<float> kCrimeFactorRange{kMinCrimeFactor, kCrimeFactor, kMaxCrimeFactor};
 
@@ -216,7 +216,7 @@ uint64_t SafeCost::GetH3(const baldr::DirectedEdge* edge, const graph_tile_ptr t
 }
 
 float SafeCost::InterpolateSafety(float crime_rate) const {
-  float factor = log1p(crime_rate * 1000);
+  float factor = crime_rate;
   factor *= crime_factor_;
   return clamp(factor, 1.0f, max_safety_multiplier_);
 }
@@ -296,9 +296,9 @@ void SafeCost::LoadCrimeData(const Costing& costing_options) {
         if (cellAreaM2(h3, &areaH3) != E_SUCCESS)
           throw;
         float normalPop = popArea->second.pop * float(areaH3 / popArea->second.area);
-        cd.crime_rate = cd.total_crime / normalPop;
+        cd.crime_rate = cd.total_crime / fmax(10.f, normalPop);
       } else {
-        cd.crime_rate = cd.total_crime;
+        cd.crime_rate = cd.total_crime / 10.f;
       }
 
       crime_data_.emplace(std::make_pair(h3, cd));
