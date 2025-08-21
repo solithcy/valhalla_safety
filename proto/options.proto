@@ -318,6 +318,9 @@ message Costing {
       float hgv_no_access_penalty = 85;
     }
     float use_truck_route = 86;
+    oneof has_crime_factor{
+      float crime_factor = 87;
+    }
   }
 
   oneof has_options {
@@ -331,6 +334,10 @@ message Costing {
   // this is used internally only, setting it in your request will have no effect
   oneof has_filter_closures {
     bool filter_closures = 4;
+  }
+
+  oneof has_db_connection{
+    string db_connection_string = 5;
   }
 }
 

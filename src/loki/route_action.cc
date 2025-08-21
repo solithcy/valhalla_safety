@@ -100,7 +100,7 @@ void loki_worker_t::route(Api& request) {
 
   // correlate the various locations to the underlying graph
   std::unordered_map<size_t, size_t> color_counts;
-  try {
+//  try {
     auto locations = PathLocation::fromPBF(options.locations(), true);
     const auto projections = loki::Search(locations, *reader, costing);
     for (size_t i = 0; i < locations.size(); ++i) {
@@ -119,7 +119,7 @@ void loki_worker_t::route(Api& request) {
         }
       }
     }
-  } catch (const std::exception&) { throw valhalla_exception_t{171}; }
+//  } catch (const std::exception&) { throw valhalla_exception_t{171}; }
 
   // are all the locations in the same color regions
   if (!connectivity_map) {

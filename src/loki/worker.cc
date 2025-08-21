@@ -78,6 +78,14 @@ void loki_worker_t::parse_costing(Api& api, bool allow_none) {
       options.set_costing_type(Costing::multimodal);
     } // otherwise use the provided costing
     else {
+      if(options.costing_type() == Costing::safe){
+        auto safe = options.mutable_costings()->find(Costing::safe);
+        if(safe != options.mutable_costings()->end()){
+          safe->second.set_db_connection_string(db_connection_string);
+        }else{
+          throw std::runtime_error("couldn't find safe costing");
+        }
+      }
       costing = factory.Create(options);
     }
   } catch (const std::runtime_error&) { throw valhalla_exception_t{125, "'" + costing_str + "'"}; }
@@ -248,6 +256,7 @@ loki_worker_t::loki_worker_t(const boost::property_tree::ptree& config,
   // assign max_distance_disable_hierarchy_culling
   max_distance_disable_hierarchy_culling =
       config.get<float>("service_limits.max_distance_disable_hierarchy_culling", 0.f);
+  db_connection_string = config.get<std::string>("additional_data.db_connection_string");
 
   // signal that the worker started successfully
   started();
