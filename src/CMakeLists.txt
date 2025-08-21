@@ -66,6 +66,12 @@ function(valhalla_module)
     target_include_directories(${library} SYSTEM ${MODULE_SYSTEM_INCLUDE_DIRECTORIES})
   endif()
 
+  if(${library} STREQUAL "valhalla-sif")
+    find_package(h3 CONFIG REQUIRED)
+    find_package(libpqxx REQUIRED)
+    target_link_libraries(${library} h3::h3 libpqxx::pqxx)
+  endif()
+
   target_link_libraries(${library} Boost::boost)
 
   if(ENABLE_COVERAGE)

@@ -14,6 +14,7 @@
 #include <valhalla/sif/motorscootercost.h>
 #include <valhalla/sif/nocost.h>
 #include <valhalla/sif/pedestriancost.h>
+#include <valhalla/sif/safecost.h>
 #include <valhalla/sif/transitcost.h>
 #include <valhalla/sif/truckcost.h>
 
@@ -40,6 +41,7 @@ public:
     Register(Costing::motor_scooter, CreateMotorScooterCost);
     Register(Costing::motorcycle, CreateMotorcycleCost);
     Register(Costing::pedestrian, CreatePedestrianCost);
+    Register(Costing::safe, CreateSafeCost);
     Register(Costing::truck, CreateTruckCost);
     Register(Costing::transit, CreateTransitCost);
     Register(Costing::multimodal, CreateNoCost); // dummy so it behaves like the rest

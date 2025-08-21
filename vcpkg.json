@@ -29,6 +29,8 @@
     "rapidjson",
     "robin-hood-hashing",
     "spatialite-tools",
+    "libpqxx",
+    "h3",
     "luajit",
     "lz4",
     "protobuf",

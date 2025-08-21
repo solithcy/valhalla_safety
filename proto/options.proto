@@ -82,6 +82,7 @@ message Costing {
     taxi = 9;
     auto_ = 10;
     bikeshare = 11;    // turns into pedestrian + bike
+    safe = 12;
   }
 
   message Options {

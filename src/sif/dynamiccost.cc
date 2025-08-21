@@ -12,6 +12,7 @@
 #include "sif/pedestriancost.h"
 #include "sif/transitcost.h"
 #include "sif/truckcost.h"
+#include "sif/safecost.h"
 #include "worker.h"
 
 using namespace valhalla::baldr;
@@ -549,6 +550,12 @@ void ParseCosting(const rapidjson::Document& doc,
     }
     case Costing::pedestrian: {
       sif::ParsePedestrianCostOptions(doc, key, costing);
+      break;
+    }
+    case Costing::safe: {
+      sif::ParsePedestrianCostOptions(doc, key, costing);
+      sif::ParseSafeCostOptions(doc, key, costing);
+      // safe cost options will override costing->type(), will add opts in future
       break;
     }
     case Costing::bikeshare: {

@@ -110,14 +110,19 @@ foreach(test ${tests})
   endif()
 endforeach()
 
-set(cost_tests autocost bicyclecost motorcyclecost motorscootercost pedestriancost transitcost truckcost)
+set(cost_tests autocost bicyclecost motorcyclecost motorscootercost pedestriancost transitcost truckcost safecost)
 foreach(test ${cost_tests})
   add_executable(${test} EXCLUDE_FROM_ALL ${VALHALLA_SOURCE_DIR}/src/sif/${test}.cc)
   set_target_properties(${test} PROPERTIES
     FOLDER "Tests"
     COMPILE_DEFINITIONS INLINE_TEST)
   create_source_groups("Source Files" ${VALHALLA_SOURCE_DIR}/src/sif/${test}.cc)
-  target_link_libraries(${test} valhalla_test)
+  target_link_libraries(${test} PRIVATE valhalla_test)
+  if(${test} STREQUAL "safecost")
+    find_package(h3 CONFIG REQUIRED)
+    find_package(libpqxx REQUIRED)
+    target_link_libraries(${test} PRIVATE Boost::boost h3::h3 libpqxx::pqxx)
+  endif()
 endforeach()
 
 set(tyr_tests route_serializer_osrm)

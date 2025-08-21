@@ -11,7 +11,8 @@ set(sources
   transitcost.cc
   truckcost.cc
   dynamiccost.cc
-  recost.cc)
+  recost.cc
+  safecost.cc)
 
 set(system_includes
   ${date_include_dir}

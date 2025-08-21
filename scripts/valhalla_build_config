@@ -162,6 +162,7 @@ config = {
         },
         'auto': {'turn_penalty_factor': 200, 'search_radius': 50},
         'pedestrian': {'turn_penalty_factor': 100, 'search_radius': 50},
+        'safe': {'turn_penalty_factor': 100, 'search_radius': 50},
         'bicycle': {'turn_penalty_factor': 140},
         'multimodal': {'turn_penalty_factor': 70},
         'logging': {'type': 'std_out', 'color': True, 'file_name': 'path_to_some_file.log'},
@@ -198,6 +199,14 @@ config = {
             'max_matrix_location_pairs': 2500,
         },
         'pedestrian': {
+            'max_distance': 250000.0,
+            'max_locations': 50,
+            'max_matrix_distance': 200000.0,
+            'max_matrix_location_pairs': 2500,
+            'min_transit_walking_distance': 1,
+            'max_transit_walking_distance': 10000,
+        },
+        'safe': {
             'max_distance': 250000.0,
             'max_locations': 50,
             'max_matrix_distance': 200000.0,
@@ -419,6 +428,10 @@ help_text = {
             'turn_penalty_factor': 'A non-negative value to penalize turns from one road segment to next',
             'search_radius': 'A non-negative value to specify the search radius (in meters) within which to search road candidates for each measurement',
         },
+        'safe': {
+            'turn_penalty_factor': 'A non-negative value to penalize turns from one road segment to next',
+            'search_radius': 'A non-negative value to specify the search radius (in meters) within which to search road candidates for each measurement',
+        },
         'bicycle': {
             'turn_penalty_factor': 'A non-negative value to penalize turns from one road segment to next'
         },
@@ -466,6 +479,14 @@ help_text = {
             'max_matrix_location_pairs': 'Maximum number of routes computed with the matrix, e.g. 2500 = 50:50 or 1:2500',
         },
         'pedestrian': {
+            'max_distance': 'Maximum b-line distance between all locations in meters',
+            'max_locations': 'Maximum number of input locations',
+            'max_matrix_distance': 'Maximum b-line distance between 2 most distant locations in meters for a matrix',
+            'max_matrix_location_pairs': 'Maximum number of routes computed with the matrix, e.g. 2500 = 50:50 or 1:2500',
+            'min_transit_walking_distance': 'Minimum distance you must walk to the egress of to a station',
+            'max_transit_walking_distance': 'Maximum distance allowed for walking when using transit',
+        },
+        'safe': {
             'max_distance': 'Maximum b-line distance between all locations in meters',
             'max_locations': 'Maximum number of input locations',
             'max_matrix_distance': 'Maximum b-line distance between 2 most distant locations in meters for a matrix',
