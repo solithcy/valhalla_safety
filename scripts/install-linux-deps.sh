@@ -64,16 +64,16 @@ popd && rm -rf $primeserver_dir
 readonly h3_dir=/tmp/h3
 git clone https://github.com/uber/h3.git $h3_dir
 pushd $h3_dir
-cmake -S . -B build
+cmake -S . -B build -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 cmake --build build -j${CONCURRENCY:-$(nproc)}
 sudo cmake --install build
 popd && rm -rf $h3_dir
 
-# build libpqxx from source (libpqxx-dev doesn't ship cmake config files))
+# build libpqxx from source (libpqxx-dev doesn't ship cmake config files)
 readonly pqxx_dir=/tmp/libpqxx
 git clone https://github.com/jtv/libpqxx.git $pqxx_dir
 pushd $pqxx_dir
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 cmake --build build -j${CONCURRENCY:-$(nproc)}
 sudo cmake --install build
 popd && rm -rf $pqxx_dir
