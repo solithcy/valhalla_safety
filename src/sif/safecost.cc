@@ -26,7 +26,7 @@ namespace sif {
 
 namespace {
 constexpr float kMinCrimeFactor = 0.0f;
-constexpr float kMaxCrimeFactor = 50.0f;
+constexpr float kMaxCrimeFactor = 200.0f;
 constexpr float kCrimeFactor = 0.5f; // avoid higher crime areas
 constexpr ranged_default_t<float> kCrimeFactorRange{kMinCrimeFactor, kCrimeFactor, kMaxCrimeFactor};
 
@@ -207,7 +207,7 @@ uint64_t SafeCost::GetH3(const baldr::DirectedEdge* edge, const graph_tile_ptr t
   H3LatLng location;
   location.lat = degsToRads(lat);
   location.lng = degsToRads(lon);
-  int resolution = 10;
+  int resolution = 9;
   H3Index index;
   if (latLngToCell(&location, resolution, &index) != E_SUCCESS) {
     throw;
@@ -218,7 +218,7 @@ uint64_t SafeCost::GetH3(const baldr::DirectedEdge* edge, const graph_tile_ptr t
 float SafeCost::InterpolateSafety(float crime_rate) const {
   float factor = crime_rate;
   factor *= crime_factor_;
-  return clamp(factor, 1.0f, max_safety_multiplier_);
+  return clamp(factor, 1.0f, fmax(max_safety_multiplier_ * crime_factor_, 1.0f));
 }
 
 bool SafeCost::Allowed(const baldr::DirectedEdge* edge,
@@ -272,13 +272,15 @@ void SafeCost::LoadCrimeData(const Costing& costing_options) {
 
       popAreas.emplace(std::pair(h3, popArea));
     }
+    result = txn.exec("select distinct date from crime_areas where date >= date_trunc('month', NOW() AT TIME ZONE 'UTC') - interval '12 months'");
+    auto months = float(result.size());
     result = txn.exec(
         "select \n"
-        "h3, sum(burglary + personal_theft + weapon_crime + bicycle_theft + damage + robbery + shoplifting + violent + anti_social + drugs + vehicle_crime) as total_crime\n"
+        "h3_cell_to_parent(h3::h3index, 9)::bigint as h3_low_res, sum(burglary + personal_theft + weapon_crime + bicycle_theft + damage + robbery + shoplifting + violent + anti_social + drugs + vehicle_crime) as total_crime\n"
         "from crime_areas\n"
         "where \n"
-        "date >= date_trunc('month', NOW() AT TIME ZONE 'UTC') - interval '3 months'\n"
-        "group by h3;");
+        "date >= date_trunc('month', NOW() AT TIME ZONE 'UTC') - interval '12 months'\n"
+        "group by h3_low_res;");
     crime_data_.reserve(result.size());
     for (const auto& row : result) {
       auto h3 = row[0].as<uint64_t>();
@@ -300,6 +302,8 @@ void SafeCost::LoadCrimeData(const Costing& costing_options) {
       } else {
         cd.crime_rate = cd.total_crime / 10.f;
       }
+
+      cd.crime_rate /= months;
 
       crime_data_.emplace(std::make_pair(h3, cd));
     }
