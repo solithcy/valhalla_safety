@@ -19,6 +19,8 @@ set(libvalhalla_compile_options "" CACHE INTERNAL "")
 set(libvalhalla_include_directories "" CACHE INTERNAL "")
 set(libvalhalla_link_objects "" CACHE INTERNAL  "")
 set(libvalhalla_link_libraries "" CACHE INTERNAL  "")
+find_package(h3 CONFIG REQUIRED)
+find_package(libpqxx REQUIRED)
 
 ## Define libvalhalla sub-modules as OBJECT libraries
 
@@ -67,8 +69,6 @@ function(valhalla_module)
   endif()
 
   if(${library} STREQUAL "valhalla-sif")
-    find_package(h3 CONFIG REQUIRED)
-    find_package(libpqxx REQUIRED)
     target_link_libraries(${library} h3::h3 libpqxx::pqxx)
   endif()
 
@@ -167,6 +167,7 @@ if (ENABLE_SERVICES)
 endif()
 
 add_library(valhalla ${valhalla_src})
+target_link_libraries(valhalla PRIVATE h3::h3 libpqxx::pqxx)
 set_target_properties(valhalla PROPERTIES FOLDER "Library")
 create_source_groups("Source Files" ${valhalla_src})
 
